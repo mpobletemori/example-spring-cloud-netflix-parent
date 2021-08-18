@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.app.item.models.Producto;
 
-@FeignClient(name = "${app.ms-productos.id}", url = "${app.ms-productos.uri.base}")
+@FeignClient(name = "${app.ms-productos.id}")
 public interface ProductoOpenFeignRepository {
 	@GetMapping("/listar")
 	List<Producto> findAll();
