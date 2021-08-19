@@ -25,6 +25,22 @@ public class ProductoController {
 	
 	@GetMapping("/ver/{id}")
 	public Producto detalle(@PathVariable Long id) {
+		// begin prueba para tolerancia fallos hystrix
+//		boolean ok = false;
+//		if(!ok) {
+//			throw new RuntimeException("no se pudo cargar producto");
+//		}
+		// end prueba para tolerancia fallos hystrix
+		// begin prueba sleep para timeout hystrix
+		//debe ser mayor al valor del campo hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds
+//		try {
+//			Thread.sleep(21000L);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		// end prueba sleep para timeout hystrix
+		
 		return this.iproductoService.findById(id);
 	}
 
