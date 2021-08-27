@@ -3,11 +3,17 @@ spring:
         uri: lb://servicio-productos
         predicates:          - Path=/api/productos/**
         filters:          - StripPrefix=2
+          - name: Ejemplo
+            args:
+              mensaje: Hola mi amixer personalizado
+              cookieNombre: usuario
+              cookieValor: mpoblete
       - id: servicio-items
         uri: lb://servicio-items
         predicates:
           - Path=/api/items/**
         filters:
           - StripPrefix=2
+          - Ejemplo2Filtro=Hola mi amiwis personalizado,usuario,mspobletec
 server:  port: 8090
 eureka:  client:    service-url:      defaultZone: http://localhost:8761/eureka
