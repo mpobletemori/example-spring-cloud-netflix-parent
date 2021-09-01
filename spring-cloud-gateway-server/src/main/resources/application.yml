@@ -15,5 +15,9 @@ spring:
         filters:
           - StripPrefix=2
           - Ejemplo2Filtro=Hola mi amiwis personalizado,usuario,mspobletec
+          - AddRequestHeader=token-request, 123456
+          - AddResponseHeader=token-response, 7890
+          - SetResponseHeader=Content-Type, text/plain
+          - AddRequestParameter=nombre, Manuel
 server:  port: 8090
 eureka:  client:    service-url:      defaultZone: http://localhost:8761/eureka
