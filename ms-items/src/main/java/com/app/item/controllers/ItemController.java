@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.item.models.Item;
 import com.app.item.models.Producto;
 import com.app.item.models.services.ItemService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 public class ItemController {
-
+	private final Logger LOGGER = LoggerFactory.getLogger(ItemController.class);
 	private ItemService itemService;
 	private CircuitBreakerFactory cbFactory;
 
@@ -36,10 +40,11 @@ public class ItemController {
 	// @HystrixCommand(fallbackMethod = "metodoAlternativo")
 	@GetMapping("/ver/{id}/cantidad/{cantidad}")
 	public Item detalle(@PathVariable Long id, @PathVariable Integer cantidad) {
-		return this.cbFactory.create("items").run(()->this.itemService.findById(id, cantidad),e->metodoAlternativo(id, cantidad));	
+		return this.cbFactory.create("items").run(()->this.itemService.findById(id, cantidad),e->metodoAlternativo(id, cantidad,e));	
 	}
 
-	public Item metodoAlternativo(Long id, Integer cantidad) {
+	public Item metodoAlternativo(Long id, Integer cantidad,Throwable e) {
+		LOGGER.info(e.getMessage());
 		return Item.builder().cantidad(cantidad)
 				.producto(Producto.builder().id(id).nombre("prodError").precio(500.00).build()).build();
 	}

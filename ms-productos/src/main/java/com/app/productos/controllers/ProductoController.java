@@ -1,6 +1,7 @@
 package com.app.productos.controllers;
 
 import java.util.List;
+//import java.util.concurrent.TimeUnit;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,17 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/ver/{id}")
-	public Producto detalle(@PathVariable Long id) {
+	public Producto detalle(@PathVariable Long id) throws InterruptedException {
+		
+		//begin pruebas con resilience4j
+//		if(id.equals(10L)) {
+//			throw new IllegalStateException("Producto no encontrado!");			
+//		}
+//		if(id.equals(7L)) {
+//			TimeUnit.SECONDS.sleep(5L);
+//		}
+		//end pruebas con resilience4j
+		
 		// begin prueba para tolerancia fallos hystrix
 //		boolean ok = false;
 //		if(!ok) {
