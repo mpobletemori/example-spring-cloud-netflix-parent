@@ -1,8 +1,40 @@
+resilience4j:
+  circuitbreaker:
+    configs:
+      defecto:
+        #Inicio circuit breaker
+        sliding-window-size: 6
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 4
+        #fin circuit breaker
+        #Inicio llamadas lentas
+        slow-call-rate-threshold: 50
+        slow-call-duration-threshold: 2s
+        #Fin llamadas lentas
+    instances:
+      productos:
+        base-config: defecto
+  timelimiter:
+    configs:
+      defecto:
+        timeout-duration: 2s
+    instances:
+      productos:
+        base-config: defecto
+
 spring:
   application:    name: servicio-gateway-server  cloud:    gateway:      routes:      - id: servicio-productos
         uri: lb://servicio-productos
         predicates:          - Path=/api/productos/**
-        filters:          - StripPrefix=2
+        filters:
+          #inicio agregar filtro de circuit breaker
+          - name: CircuitBreaker
+            args:
+              name: productos
+              statusCodes: 500,401
+              fallbackUri: forward:/api/items/ver/9/cantidad/5
+          #fin agregar filtro de circuit breaker          - StripPrefix=2
           - name: Ejemplo
             args:
               mensaje: Hola mi amixer personalizado

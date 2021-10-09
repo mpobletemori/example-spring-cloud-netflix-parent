@@ -62,7 +62,7 @@ public class ItemController {
 	
 	@CircuitBreaker(name = "items", fallbackMethod = "metodoAlternativo2")
 	@TimeLimiter(name = "items")
-	@GetMapping("/ver3/{id}/cantidad/{cantidad}")
+	@GetMapping("/ver4/{id}/cantidad/{cantidad}")
 	public CompletableFuture<Item> detalle4(@PathVariable Long id, @PathVariable Integer cantidad) {
 		return CompletableFuture.supplyAsync(() -> this.itemService.findById(id, cantidad));
 	}
