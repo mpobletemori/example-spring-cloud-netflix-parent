@@ -13,6 +13,8 @@ import com.app.item.models.Item;
 import com.app.item.models.Producto;
 import com.app.item.models.services.ItemService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,12 @@ public class ItemController {
 	@GetMapping("/ver/{id}/cantidad/{cantidad}")
 	public Item detalle(@PathVariable Long id, @PathVariable Integer cantidad) {
 		return this.cbFactory.create("items").run(()->this.itemService.findById(id, cantidad),e->metodoAlternativo(id, cantidad,e));	
+	}
+	
+	@CircuitBreaker(name = "items")
+	@GetMapping("/ver2/{id}/cantidad/{cantidad}")
+	public Item detalle2(@PathVariable Long id, @PathVariable Integer cantidad) {
+		return this.itemService.findById(id, cantidad);
 	}
 
 	public Item metodoAlternativo(Long id, Integer cantidad,Throwable e) {
