@@ -1,6 +1,7 @@
 package com.app.item.controllers;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import com.app.item.models.Producto;
 import com.app.item.models.services.ItemService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,19 +44,41 @@ public class ItemController {
 	// @HystrixCommand(fallbackMethod = "metodoAlternativo")
 	@GetMapping("/ver/{id}/cantidad/{cantidad}")
 	public Item detalle(@PathVariable Long id, @PathVariable Integer cantidad) {
-		return this.cbFactory.create("items").run(()->this.itemService.findById(id, cantidad),e->metodoAlternativo(id, cantidad,e));	
+		return this.cbFactory.create("items").run(() -> this.itemService.findById(id, cantidad),
+				e -> metodoAlternativo(id, cantidad, e));
 	}
-	
-	@CircuitBreaker(name = "items")
+
+	@CircuitBreaker(name = "items", fallbackMethod = "metodoAlternativo")
 	@GetMapping("/ver2/{id}/cantidad/{cantidad}")
 	public Item detalle2(@PathVariable Long id, @PathVariable Integer cantidad) {
 		return this.itemService.findById(id, cantidad);
 	}
+	
+	@TimeLimiter(name = "items",fallbackMethod = "metodoAlternativo2")
+	@GetMapping("/ver3/{id}/cantidad/{cantidad}")
+	public CompletableFuture<Item> detalle3(@PathVariable Long id, @PathVariable Integer cantidad) {
+		return CompletableFuture.supplyAsync(() -> this.itemService.findById(id, cantidad));
+	}
+	
+	@CircuitBreaker(name = "items", fallbackMethod = "metodoAlternativo2")
+	@TimeLimiter(name = "items")
+	@GetMapping("/ver3/{id}/cantidad/{cantidad}")
+	public CompletableFuture<Item> detalle4(@PathVariable Long id, @PathVariable Integer cantidad) {
+		return CompletableFuture.supplyAsync(() -> this.itemService.findById(id, cantidad));
+	}
 
-	public Item metodoAlternativo(Long id, Integer cantidad,Throwable e) {
+	public Item metodoAlternativo(Long id, Integer cantidad, Throwable e) {
 		LOGGER.info(e.getMessage());
 		return Item.builder().cantidad(cantidad)
 				.producto(Producto.builder().id(id).nombre("prodError").precio(500.00).build()).build();
+	}
+
+	public CompletableFuture<Item> metodoAlternativo2(Long id, Integer cantidad, Throwable e) {
+		LOGGER.info(e.getMessage());
+		return CompletableFuture.supplyAsync(() -> {
+			return Item.builder().cantidad(cantidad)
+					.producto(Producto.builder().id(id).nombre("prodError").precio(500.00).build()).build();
+		});
 	}
 
 }
