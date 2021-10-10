@@ -28,12 +28,12 @@ public class ProductoController {
 	public Producto detalle(@PathVariable Long id) throws InterruptedException {
 		
 		//begin pruebas con resilience4j
-		if(id.equals(10L)) {
-			throw new IllegalStateException("Producto no encontrado!");			
-		}
-		if(id.equals(7L)) {
-			TimeUnit.SECONDS.sleep(5L);
-		}
+//		if(id.equals(10L)) {
+//			throw new IllegalStateException("Producto no encontrado!");			
+//		}
+//		if(id.equals(7L)) {
+//			TimeUnit.SECONDS.sleep(5L);
+//		}
 		//end pruebas con resilience4j
 		
 		// begin prueba para tolerancia fallos hystrix
