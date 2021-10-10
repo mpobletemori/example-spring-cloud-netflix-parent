@@ -1,9 +1,15 @@
 package com.app.item.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,10 +33,14 @@ public class ItemController {
 	private final Logger LOGGER = LoggerFactory.getLogger(ItemController.class);
 	private ItemService itemService;
 	private CircuitBreakerFactory cbFactory;
+	private String texto;
+	@Autowired
+	private Environment env;
 
-	public ItemController(ItemService itemService, CircuitBreakerFactory cbFactory) {
+	public ItemController(ItemService itemService, CircuitBreakerFactory cbFactory,@Value("${configuracion.text}") String texto) {
 		this.itemService = itemService;
 		this.cbFactory = cbFactory;
+		this.texto = texto;
 	}
 
 	@GetMapping("/listar")
@@ -80,5 +90,18 @@ public class ItemController {
 					.producto(Producto.builder().id(id).nombre("prodError").precio(500.00).build()).build();
 		});
 	}
-
+	
+	@GetMapping("/obtener-config")
+	public ResponseEntity<?> obtenerConfig(){
+		LOGGER.info("texto {0}",this.texto);
+		Map<String,String> resp = new HashMap<>();
+		resp.put("texto", this.texto);
+		
+		if(this.env.getActiveProfiles().length>0 && this.env.getActiveProfiles()[0].equals("dev")) {
+			resp.put("configuracion.autor.nombre", this.env.getProperty("configuracion.autor.nombre","none"));
+			resp.put("configuracion.autor.email", this.env.getProperty("configuracion.autor.email","none"));
+		}
+		return ResponseEntity.ok(resp);
+	}
+	
 }
