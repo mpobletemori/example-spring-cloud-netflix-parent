@@ -56,4 +56,15 @@ public class ProductoServiceImpl implements IProductoService {
 		//return port;
 	}
 
+	@Transactional
+	@Override
+	public Producto save(Producto producto) {
+		return this.productoDao.save(producto);
+	}
+	@Transactional
+	@Override
+	public void deleteById(Long id) {
+		this.productoDao.deleteById(id);
+	}
+
 }
