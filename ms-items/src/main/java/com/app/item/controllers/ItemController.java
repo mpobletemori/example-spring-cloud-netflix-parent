@@ -8,6 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 //import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
+@RefreshScope
 @RestController
 public class ItemController {
 	private final Logger LOGGER = LoggerFactory.getLogger(ItemController.class);
