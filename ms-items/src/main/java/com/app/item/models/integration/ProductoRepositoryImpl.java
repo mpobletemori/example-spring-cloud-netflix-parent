@@ -36,4 +36,19 @@ public class ProductoRepositoryImpl implements ProductoRepository {
 		return this.productoOpenFeignRepository.findById(id);
 	}
 
+	@Override
+	public Producto save(Producto producto) {
+		return this.productoOpenFeignRepository.save(producto);
+	}
+
+	@Override
+	public Producto update(Producto producto, Long id) {
+		return this.productoOpenFeignRepository.update(producto, id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		this.productoOpenFeignRepository.delete(id);
+	}
+
 }

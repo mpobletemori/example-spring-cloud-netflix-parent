@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.app.item.models.Item;
+import com.app.item.models.Producto;
 import com.app.item.models.integration.ProductoRepository;
 import com.app.item.models.services.adapter.ItemAdapter;
 
@@ -36,6 +37,23 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public Item findById(Long id, Integer cantidad) {
 		return this.itemAdapter.toItem2(cantidad, this.productoRepository.findById(id));
+	}
+
+	@Override
+	public Producto save(Producto producto) {
+		
+		return productoRepository.save(producto);
+	}
+
+	@Override
+	public Producto update(Producto producto, Long id) {
+		// TODO Auto-generated method stub
+		return productoRepository.update(producto, id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		productoRepository.delete(id);
 	}
 
 }
