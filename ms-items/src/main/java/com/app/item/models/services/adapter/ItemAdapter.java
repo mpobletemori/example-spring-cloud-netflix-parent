@@ -3,7 +3,7 @@ package com.app.item.models.services.adapter;
 import org.springframework.stereotype.Component;
 
 import com.app.item.models.Item;
-import com.app.item.models.Producto;
+import com.app.commons.models.entity.Producto;
 
 @Component
 public class ItemAdapter {

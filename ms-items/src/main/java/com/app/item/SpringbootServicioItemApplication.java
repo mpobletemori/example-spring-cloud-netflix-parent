@@ -3,7 +3,9 @@ package com.app.item;
 import java.time.Duration;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
@@ -19,6 +21,7 @@ import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 @EnableEurekaClient
 @EnableFeignClients
 @SpringBootApplication
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class SpringbootServicioItemApplication {
 
 	public static void main(String[] args) {

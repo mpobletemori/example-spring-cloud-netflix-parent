@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.app.item.models.Item;
-import com.app.item.models.Producto;
+import com.app.commons.models.entity.Producto;
 import com.app.item.models.integration.ProductoRepository;
 import com.app.item.models.services.adapter.ItemAdapter;
 

@@ -2,7 +2,7 @@ package com.app.item.models.integration;
 
 import java.util.List;
 
-import com.app.item.models.Producto;
+import com.app.commons.models.entity.Producto;
 
 public interface ProductoRepository {
 	List<Producto> findAll();

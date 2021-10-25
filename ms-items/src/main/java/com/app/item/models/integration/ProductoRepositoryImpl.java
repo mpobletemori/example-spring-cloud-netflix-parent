@@ -4,13 +4,8 @@
 package com.app.item.models.integration;
 
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import com.app.item.models.Producto;
+import com.app.commons.models.entity.Producto;
 
 /**
  * @author mpobletemori

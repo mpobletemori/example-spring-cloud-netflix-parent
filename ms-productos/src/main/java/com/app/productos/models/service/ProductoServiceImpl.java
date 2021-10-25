@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.app.productos.models.dao.ProductoDao;
-import com.app.productos.models.entity.Producto;
+import com.app.commons.models.entity.Producto;
 
 /**
  * @author mpobletemori
