@@ -1,4 +1,4 @@
-package com.ms.oauth2.usuarios.models.entity;
+package com.ms.commons.oauth2.usuarios.models.entity;
 
 import java.io.Serializable;
 import java.util.List;
