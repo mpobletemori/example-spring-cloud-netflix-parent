@@ -12,3 +12,14 @@ Body
   password=12345
   grant_type=password
 
+RENOVACION DE ACCESS TOKEN Y REFRESH TOKEN APARTIR DE REFRESH_TOKEN
+==============================================
+POST
+http://localhost:8089/api/security/oauth/token
+ 
+header:
+  Authorization : Basic base64(frontendapp:12345) //autenticacion de clientid:clientesecret   
+Body 
+  x-www-form-urlencoded
+  refresh_token=<<refresh_token del accesstoken caducado>>
+  grant_type=refresh_token
