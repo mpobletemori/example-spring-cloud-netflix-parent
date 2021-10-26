@@ -1,0 +1,14 @@
+PARA AUTENTICARSE A OAUTH2
+==============================================
+POST
+http://localhost:8089/api/security/oauth/token
+ 
+header:
+  Authorization : Basic base64(frontendapp:12345) //autenticacion de clientid:clientesecret
+   
+Body 
+  x-www-form-urlencoded
+  username=mpoblete
+  password=12345
+  grant_type=password
+
