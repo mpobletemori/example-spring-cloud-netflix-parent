@@ -19,11 +19,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Singular;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "roles")
 public class Rol implements Serializable {
@@ -33,9 +28,27 @@ public class Rol implements Serializable {
 	
 	@Column(unique = true,length = 30)
 	private String nombre;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 	
 //	opcional relacion opuesta muchos a muchos
 //	@ManyToMany(fetch = FetchType.LAZY,mappedBy = "roles")
 //	@Singular("roles")
 //	private List<Usuario> usuarios;
+	
+	
 }
