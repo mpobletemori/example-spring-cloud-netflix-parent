@@ -19,13 +19,14 @@ import org.springframework.stereotype.Service;
 
 import com.ms.commons.oauth2.usuarios.models.entity.Usuario;
 import com.ms.oauth2.authserver.clients.UsuarioFeignClient;
+import com.ms.oauth2.authserver.service.UsuarioService;
 
 /**
  * @author vector
  *
  */
 @Service
-public class UsuarioServiceImpl implements UserDetailsService {
+public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 	private UsuarioFeignClient usuarioFeignClient;
@@ -39,28 +40,31 @@ public class UsuarioServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario usuario = findByUsername(username);
+		Usuario usuario = this.usuarioFeignClient.findByUsername(username);
+		if (Objects.isNull(usuario)) {
+			final String msg = "Error en login,no existe el usuario '" + username + "'en el sistema";
+			LOGGER.error(msg);
+			throw new UsernameNotFoundException(msg);
+		}
+		return toUserDetails(username, usuario);
+	}
+
+	private UserDetails toUserDetails(String username, Usuario usuario) {
 		List<GrantedAuthority> authorities = usuario.getRoles().stream()
 				.map(rol -> new SimpleGrantedAuthority(rol.getNombre()))
-				.peek(authority->LOGGER.info("Role: "+authority.getAuthority()))
-				.collect(Collectors.toList());
+				.peek(authority -> LOGGER.info("Role: " + authority.getAuthority())).collect(Collectors.toList());
 		boolean accountNonExpired = true;
 		boolean credentialsNonExpired = true;
 		boolean accountNonLocked = true;
-		
-		LOGGER.info("usuario "+username+" autenticado");
+
+		LOGGER.info("usuario " + username + " autenticado");
 		return new User(usuario.getUsername(), usuario.getPassword(), usuario.getEnabled(), accountNonExpired,
 				credentialsNonExpired, accountNonLocked, authorities);
 	}
 
-	private Usuario findByUsername(String username) {
-		Usuario usuario = this.usuarioFeignClient.findByUsername(username);
-		if (Objects.isNull(usuario)) {
-			final String msg = "Error en login,no existe el usuario '"+username+"'en el sistema";
-			LOGGER.error(msg);
-			throw new UsernameNotFoundException(msg);
-		}
-		return usuario;
+	@Override
+	public Usuario findByUsername(String username) {
+		return this.usuarioFeignClient.findByUsername(username);
 	}
 
 }
