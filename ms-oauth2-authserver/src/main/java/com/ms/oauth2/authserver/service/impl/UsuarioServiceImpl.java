@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import com.ms.commons.oauth2.usuarios.models.entity.Usuario;
 import com.ms.oauth2.authserver.clients.UsuarioFeignClient;
 import com.ms.oauth2.authserver.service.UsuarioService;
+
+import feign.FeignException;
 
 /**
  * @author vector
@@ -65,6 +68,48 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 	@Override
 	public Usuario findByUsername(String username) {
 		return this.usuarioFeignClient.findByUsername(username);
+	}
+
+	@Override
+	public Usuario update(Usuario usuario, Long id) {
+		return this.usuarioFeignClient.update(usuario, id);
+	}
+
+	@Override
+	public void registarIntentosFallido(Authentication authentication) {
+		String userName = authentication.getName();
+		try {
+			Usuario usuario = this.findByUsername(userName);
+			if (Objects.isNull(usuario.getIntentos())) {
+				usuario.setIntentos(0);
+			}
+			LOGGER.info("Intentos actual es de :" + usuario.getIntentos());
+			usuario.setIntentos(usuario.getIntentos() + 1);
+			LOGGER.info("Intentos despues es de :" + usuario.getIntentos());
+			if (usuario.getIntentos() >= 3) {
+				LOGGER.error(String.format("El usuario %s deshabilitado por maximo de intentos", userName));
+				usuario.setEnabled(false);
+			}
+			this.update(usuario, usuario.getId());
+
+		} catch (FeignException e) {
+			LOGGER.error(String.format("El usuario %s no existe en el sistema", userName), e);
+		}
+	}
+
+	@Override
+	public void reiniciarContadorIntentoFallido(Authentication authentication) {
+		String userName = authentication.getName();
+		try {
+			Usuario usuario = this.findByUsername(userName);
+			if (!Objects.isNull(usuario.getIntentos()) && usuario.getIntentos() > 0) {
+				usuario.setIntentos(0);
+				this.update(usuario, usuario.getId());
+			}
+		} catch (FeignException e) {
+			LOGGER.error(String.format("El usuario %s no existe en el sistema", userName), e);
+		}
+
 	}
 
 }

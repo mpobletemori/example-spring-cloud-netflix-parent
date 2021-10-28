@@ -22,34 +22,35 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Singular;
 
-
 @Entity
 @Table(name = "usuarios")
 public class Usuario implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-    @Column(unique = true,length = 20) 
+	@Column(unique = true, length = 20)
 	private String username;
-    @Column(length = 60) 
+	@Column(length = 60)
 	private String password;
 	private Boolean enabled;
 	private String nombre;
 	private String apellido;
-	@Column(unique = true,length = 100) 
+	@Column(unique = true, length = 100)
 	private String email;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY)
-	//personalizar tabla intermedia
-	//definir nombre tabla intermedia
+	// personalizar tabla intermedia
+	// definir nombre tabla intermedia
 	@JoinTable(name = "usuarios_roles"
-	//definir id de tabla principal
-	,joinColumns = @JoinColumn(name="usuario_id")
-	//definir id de tabla secundaria
-	,inverseJoinColumns = @JoinColumn(name="role_id")
-	//definir restricciones para que sea unico el par de ids
-	,uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id","role_id"})})
+	// definir id de tabla principal
+			, joinColumns = @JoinColumn(name = "usuario_id")
+			// definir id de tabla secundaria
+			, inverseJoinColumns = @JoinColumn(name = "role_id")
+			// definir restricciones para que sea unico el par de ids
+			, uniqueConstraints = { @UniqueConstraint(columnNames = { "usuario_id", "role_id" }) })
 	private List<Rol> roles;
+
+	private Integer intentos;
 
 	/**
 	 * @return the id
@@ -162,7 +163,13 @@ public class Usuario implements Serializable {
 	public void setRoles(List<Rol> roles) {
 		this.roles = roles;
 	}
-	
-	
+
+	public Integer getIntentos() {
+		return intentos;
+	}
+
+	public void setIntentos(Integer intentos) {
+		this.intentos = intentos;
+	}
 
 }
