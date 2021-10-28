@@ -43,13 +43,14 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario usuario = this.usuarioFeignClient.findByUsername(username);
-		if (Objects.isNull(usuario)) {
+		try {
+			return toUserDetails(username, this.usuarioFeignClient.findByUsername(username));
+		} catch (FeignException e) {
 			final String msg = "Error en login,no existe el usuario '" + username + "'en el sistema";
 			LOGGER.error(msg);
 			throw new UsernameNotFoundException(msg);
 		}
-		return toUserDetails(username, usuario);
+		
 	}
 
 	private UserDetails toUserDetails(String username, Usuario usuario) {
