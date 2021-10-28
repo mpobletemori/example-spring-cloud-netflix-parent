@@ -24,7 +24,8 @@ resilience4j:
         base-config: defecto
 
 spring:
-  application:    name: servicio-gateway-server  cloud:    gateway:      routes:      - id: servicio-productos
+  config:
+    import: "optional:configserver:"  cloud:    gateway:      routes:      - id: servicio-productos
         uri: lb://servicio-productos
         predicates:          - Path=/api/productos/**
         filters:
@@ -51,5 +52,17 @@ spring:
           - AddResponseHeader=token-response, 7890
           - SetResponseHeader=Content-Type, text/plain
           - AddRequestParameter=nombre, Manuel
+      - id: servicio-oauth2
+        uri: lb://servicio-oauth2
+        predicates:
+          - Path=/api/security/**
+        filters:
+          - StripPrefix=2
+      - id: servicio-usuarios
+        uri: lb://servicio-usuarios
+        predicates:
+          - Path=/api/usuarios/**
+        filters:
+          - StripPrefix=2
 server:  port: 8090
 eureka:  client:    service-url:      defaultZone: http://localhost:8761/eureka
