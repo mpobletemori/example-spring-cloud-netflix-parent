@@ -37,10 +37,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/api/security/oauth/**").permitAll()
-				.antMatchers(HttpMethod.GET, "/api/productos/listar", "/api/items/listar", "/api/usuarios/usuarios")
-				.permitAll().antMatchers(HttpMethod.GET, "/api/productos/ver/{id}",
-						"/api/items/ver/{id}/cantidad/{cantidad}", "/api/usuarios/usuarios/{id}")
-				.hasAnyRole("ADMIN", "USER")
+				.antMatchers(HttpMethod.GET, "/api/productos/listar", 
+						                     "/api/items/listar",
+						                     "/api/usuarios/usuarios").permitAll()
+				.antMatchers(HttpMethod.GET, "/api/productos/ver/{id}",
+						                     "/api/items/ver/{id}/cantidad/{cantidad}",
+						                     "/api/usuarios/usuarios/{id}").hasAnyRole("ADMIN", "USER")
 				// opcion 1
 //		.antMatchers(HttpMethod.POST,"/api/productos/crear"
 //                ,"/api/items/crear"
@@ -54,7 +56,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 				// opcion 2 version simplifiada de opcion 1
 				.antMatchers("/api/productos/**", "/api/items/**", "/api/usuarios/**").hasRole("ADMIN")
 				// en caso de otras rutas no configuradas previamente debe ser autenticadas
-				.anyRequest().authenticated().and().cors().configurationSource(corsConfigurationSource());
+				.anyRequest().authenticated()
+				.and()
+				.cors().configurationSource(corsConfigurationSource());
 
 	}
 
