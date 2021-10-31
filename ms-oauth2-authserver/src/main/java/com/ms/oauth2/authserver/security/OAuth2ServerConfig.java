@@ -1,6 +1,7 @@
 package com.ms.oauth2.authserver.security;
 
 import java.util.Arrays;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -87,7 +88,7 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		jwtAccessTokenConverter.setSigningKey(this.env.getProperty("config.security.oauth2.jwt.key"));
+		jwtAccessTokenConverter.setSigningKey(Base64.getEncoder().encodeToString(this.env.getProperty("config.security.oauth2.jwt.key").getBytes()));
 		return jwtAccessTokenConverter;
 	}
 	//fin configuracion usuarios owners
