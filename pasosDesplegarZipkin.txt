@@ -1,0 +1,5 @@
+--Para ejecutar zipkin por defecto usar el comando
+java -jar zipkin-server-2.23.4-exec.jar
+
+-- Para acceder UI de zipkin
+http://127.0.0.1:9411/
