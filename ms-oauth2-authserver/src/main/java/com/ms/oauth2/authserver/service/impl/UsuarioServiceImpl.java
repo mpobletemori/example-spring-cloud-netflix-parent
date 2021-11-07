@@ -22,6 +22,7 @@ import com.ms.commons.oauth2.usuarios.models.entity.Usuario;
 import com.ms.oauth2.authserver.clients.UsuarioFeignClient;
 import com.ms.oauth2.authserver.service.UsuarioService;
 
+import brave.Tracer;
 import feign.FeignException;
 
 /**
@@ -33,12 +34,14 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(UsuarioServiceImpl.class);
 	private UsuarioFeignClient usuarioFeignClient;
+	private Tracer trace;
 
 	/**
 	 * @param usuarioFeignClient
 	 */
-	public UsuarioServiceImpl(UsuarioFeignClient usuarioFeignClient) {
+	public UsuarioServiceImpl(UsuarioFeignClient usuarioFeignClient, Tracer trace) {
 		this.usuarioFeignClient = usuarioFeignClient;
+		this.trace = trace;
 	}
 
 	@Override
@@ -48,9 +51,10 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 		} catch (FeignException e) {
 			final String msg = "Error en login,no existe el usuario '" + username + "'en el sistema";
 			LOGGER.error(msg);
+			this.trace.currentSpan().tag("error.mensaje", msg +": "+e.getMessage());
 			throw new UsernameNotFoundException(msg);
 		}
-		
+
 	}
 
 	private UserDetails toUserDetails(String username, Usuario usuario) {
@@ -78,6 +82,7 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 	@Override
 	public void registarIntentosFallido(Authentication authentication) {
+		StringBuilder errors = new StringBuilder();
 		String userName = authentication.getName();
 		try {
 			Usuario usuario = this.findByUsername(userName);
@@ -87,12 +92,15 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 			LOGGER.info("Intentos actual es de :" + usuario.getIntentos());
 			usuario.setIntentos(usuario.getIntentos() + 1);
 			LOGGER.info("Intentos despues es de :" + usuario.getIntentos());
+			errors.append("Intentos de login :" + usuario.getIntentos());
 			if (usuario.getIntentos() >= 3) {
-				LOGGER.error(String.format("El usuario %s deshabilitado por maximo de intentos", userName));
+				String msgDeshabilitado = String.format("El usuario %s deshabilitado por maximo de intentos", userName);
+				LOGGER.error(msgDeshabilitado);
+				errors.append(" - "+msgDeshabilitado);
 				usuario.setEnabled(false);
 			}
 			this.update(usuario, usuario.getId());
-
+			this.trace.currentSpan().tag("error.mensaje",errors.toString());
 		} catch (FeignException e) {
 			LOGGER.error(String.format("El usuario %s no existe en el sistema", userName), e);
 		}

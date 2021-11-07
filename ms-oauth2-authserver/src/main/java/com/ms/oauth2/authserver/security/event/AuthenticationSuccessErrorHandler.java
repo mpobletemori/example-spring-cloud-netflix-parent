@@ -1,7 +1,5 @@
 package com.ms.oauth2.authserver.security.event;
 
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
-import com.ms.commons.oauth2.usuarios.models.entity.Usuario;
 import com.ms.oauth2.authserver.service.UsuarioService;
-
-import feign.FeignException;
 
 @Component
 public class AuthenticationSuccessErrorHandler implements AuthenticationEventPublisher {
@@ -24,6 +19,7 @@ public class AuthenticationSuccessErrorHandler implements AuthenticationEventPub
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
 
 	@Override
 	public void publishAuthenticationSuccess(Authentication authentication) {
