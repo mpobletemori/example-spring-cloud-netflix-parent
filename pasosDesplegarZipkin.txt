@@ -1,5 +1,20 @@
 --Para ejecutar zipkin por defecto usar el comando
 java -jar zipkin-server-2.23.4-exec.jar
 
+java -jar zipkin-server-2.23.4-exec.jar --server.port=7000
+
 -- Para acceder UI de zipkin
 http://127.0.0.1:9411/
+
+docker run -d -p 3306:3306 --name mysql80_1 -e MYSQL_ROOT_PASSWORD=1234 mysql:8.0 --default-authentication-plugin=mysql_native_password
+docker exec -it mysql80_1 mysql -uroot -p
+
+docker run -d  -p 5432:5432 --name some-postgres -e POSTGRES_PASSWORD=1234 postgres:9.5-alpine
+
+
+docker pull rabbitmq:3.8.27-management-alpine
+docker run -d -p 15672:15672 -p 5672:5672 --name rabbitmq_1 rabbitmq:3.8.27-management-alpine
+http://localhost:15672/#/
+usuario:guest
+pwd:guest
+Puerto de rabbitmq 5672
