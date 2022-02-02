@@ -108,3 +108,22 @@ http://localhost:15672/#/
 usuario:guest
 pwd:guest
 Puerto de rabbitmq 5672
+
+
+--Para generar imagen docker
+docker build -t <<nombre_imagen:version>> .
+docker build -t config-server:1.0.0 .
+docker build -t eureka-server:1.0.0 .
+
+--Crear red en docker para prueba
+docker network create springcloud_red
+
+--Crear contenedor docker apartir de imagen docker creado
+docker run -p 8888:8888 --name config-server --network springcloud_red config-server:1.0.0
+docker run -p 8761:8761 --name eureka-server --network springcloud_red eureka-server:1.0.0
+
+--Ver log en docker
+docker log -f <<image_id>>
+docker log -f <<container_name>>
+
+
