@@ -121,9 +121,12 @@ docker network create springcloud_red
 --Crear contenedor docker apartir de imagen docker creado
 docker run -p 8888:8888 --name config-server --network springcloud_red config-server:1.0.0
 docker run -p 8761:8761 --name eureka-server --network springcloud_red eureka-server:1.0.0
-
+docker pull mysql:8
+docker run -d -p 3307:3306 --name mysql8_0_springcloud --network springcloud_red -e MYSQL_DATABASE=db_springboot_cloud -e MYSQL_ROOT_PASSWORD=1234 mysql:8
+docker pull postgres:12-alpine
+docker run -d  -p 5432:5432 --name some-postgres --network springcloud_red -e POSTGRES_DB=db_springboot_cloud -e POSTGRES_PASSWORD=1234 postgres:9.5-alpine
 --Ver log en docker
-docker log -f <<image_id>>
-docker log -f <<container_name>>
+docker logs -f <<image_id>>
+docker logs -f <<container_name>>
 
 
