@@ -117,6 +117,7 @@ docker build -t <<nombre_imagen:version>> .
 docker build -t config-server:1.0.0 .
 docker build -t eureka-server:1.0.0 .
 docker build -t servicio-usuarios:1.0.0 .
+docker build -t servicio-oauth2:1.0.0 .
 docker build -t servicio-productos:1.0.0 .
 docker build -t servicio-zuul-server:1.0.0 .
 
@@ -127,17 +128,30 @@ docker network create springcloud_red
 docker run -d -p 3306:3306 --name mysql5_7_springcloud    --network springcloud_red -e MYSQL_DATABASE=db_springboot_cloud -e MYSQL_ROOT_PASSWORD=1234 mysql:5.7
 docker run -d -p 5432:5432 --name postgres9_5_springcloud --network springcloud_red -e POSTGRES_DB=db_springboot_cloud    -e POSTGRES_PASSWORD=1234   postgres:9.5-alpine
 
-docker run -p 8888:8888 --name config-server --network springcloud_red config-server:1.0.0
-docker run -p 8761:8761 --name eureka-server --network springcloud_red eureka-server:1.0.0
+docker run -p 8888:8888 --name config-server        --network springcloud_red config-server:1.0.0
+docker run -p 8761:8761 --name eureka-server        --network springcloud_red eureka-server:1.0.0
 --PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
-docker run -P --name servicio-usuarios --network springcloud_red servicio-usuarios:1.0.0
+docker run -P           --name servicio-usuarios    --network springcloud_red servicio-usuarios:1.0.0
 --PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
-docker run -P --name servicio-productos --network springcloud_red servicio-productos:1.0.0
+docker run -P           --name servicio-oauth2      --network springcloud_red servicio-oauth2:1.0.0
+--PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
+docker run -P           --name servicio-productos   --network springcloud_red servicio-productos:1.0.0
 docker run -p 8090:8090 --name servicio-zuul-server --network springcloud_red servicio-zuul-server:1.0.0
 
 --Ver log en docker
 docker logs -f <<image_id>>
 docker logs -f <<container_name>>
+
+--Bajar contenedor
+docker stop <<container_id1>> <<container_id3>> <<container_id3>> 
+--Levantar contenedor
+docker start <<container_id1>> <<container_id3>> <<container_id3>> 
+
+--borrar contenedor (previamente detener contenedor)
+docker rm <<container_id1>> <<container_id3>> <<container_id3>> 
+
+--borrar imagen
+docker rmi <<image_id1>> <<image_id3>> <<image_id3>>
 
 1.-config-server
 2.-eureka-server
