@@ -116,6 +116,7 @@ Puerto de rabbitmq 5672
 docker build -t <<nombre_imagen:version>> .
 docker build -t config-server:1.0.0 .
 docker build -t eureka-server:1.0.0 .
+docker build -t servicio-usuarios:1.0.0 .
 docker build -t servicio-productos:1.0.0 .
 docker build -t servicio-zuul-server:1.0.0 .
 
@@ -123,11 +124,14 @@ docker build -t servicio-zuul-server:1.0.0 .
 docker network create springcloud_red
 
 --Crear contenedor docker apartir de imagen docker creado
-docker run -p 8888:8888 --name config-server --network springcloud_red config-server:1.0.0
-docker run -p 8761:8761 --name eureka-server --network springcloud_red eureka-server:1.0.0
 docker run -d -p 3306:3306 --name mysql5_7_springcloud    --network springcloud_red -e MYSQL_DATABASE=db_springboot_cloud -e MYSQL_ROOT_PASSWORD=1234 mysql:5.7
 docker run -d -p 5432:5432 --name postgres9_5_springcloud --network springcloud_red -e POSTGRES_DB=db_springboot_cloud    -e POSTGRES_PASSWORD=1234   postgres:9.5-alpine
---PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P
+
+docker run -p 8888:8888 --name config-server --network springcloud_red config-server:1.0.0
+docker run -p 8761:8761 --name eureka-server --network springcloud_red eureka-server:1.0.0
+--PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
+docker run -P --name servicio-usuarios --network springcloud_red servicio-usuarios:1.0.0
+--PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
 docker run -P --name servicio-productos --network springcloud_red servicio-productos:1.0.0
 docker run -p 8090:8090 --name servicio-zuul-server --network springcloud_red servicio-zuul-server:1.0.0
 
