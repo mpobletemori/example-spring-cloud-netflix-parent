@@ -159,7 +159,7 @@ docker run -p 9000:9000 --name servicio-items   --network springcloud_red servic
 cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\zuul-server
 .\mvnw clean package -DskipTests
 docker build -t servicio-zuul-server:1.0.0 .
-docker run -p 8090:8090 --name servicio-zuul-server --network springcloud_red servicio-zuul-server:1.0.0
+docker run -p 8089:8089 --name servicio-zuul-server --network springcloud_red servicio-zuul-server:1.0.0
 
 --Ver log en docker
 docker logs -f <<image_id>>
