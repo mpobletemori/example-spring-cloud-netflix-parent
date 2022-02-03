@@ -3,6 +3,7 @@ package com.ms.oauth2.authserver.security;
 import java.util.Arrays;
 import java.util.Base64;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -20,77 +21,73 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+
+
 @RefreshScope
 @Configuration
 @EnableAuthorizationServer
 public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
-	
+
+	private static final String CONFIG_SECURITY_OAUTH2_CLIENTE_SECRET = "12345";
+
+	private static final String CONFIG_SECURITY_OAUTH2_JWT_KEY = "algun_codigo_secreto_aeiou";
+
 	@Autowired
 	private Environment env;
-	
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+
 	@Autowired
 	private InfoAdicionalToken infoAdicionalToken;
-    
-	//inicio configuracion de clients
-	//Configuracion de niveles de permisos para las url de autenticacion y autorizacion (validacion de token)
+
+	// inicio configuracion de clients
+	// Configuracion de niveles de permisos para las url de autenticacion y
+	// autorizacion (validacion de token)
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		security
-		.tokenKeyAccess("permitAll()")//permitir acceso a la url de generacion de token /oauth/token
-		.checkTokenAccess("isAuthenticated()");//debe ser autenticado la validacion del token
+		security.tokenKeyAccess("permitAll()")// permitir acceso a la url de generacion de token /oauth/token
+				.checkTokenAccess("isAuthenticated()");// debe ser autenticado la validacion del token
 	}
-    
-	//configuracion de credenciales de clients
+
+	// configuracion de credenciales de clients
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory()
-		 .withClient(this.env.getProperty("config.security.oauth2.client.id"))
-		 .secret(passwordEncoder.encode(this.env.getProperty("config.security.oauth2.client.secret")))
-		 .scopes("read","write")
-		 .authorizedGrantTypes("password","refresh_token")
-		 .accessTokenValiditySeconds(3600)
-		 .refreshTokenValiditySeconds(3600)
-		 .and()
-		 .withClient("androidapp")
-		 .secret(passwordEncoder.encode("12345"))
-		 .scopes("read","write")
-		 .authorizedGrantTypes("password","refresh_token")
-		 .accessTokenValiditySeconds(3600)
-		 .refreshTokenValiditySeconds(3600);
+		clients.inMemory().withClient(this.env.getProperty("config.security.oauth2.client.id"))
+				.secret(passwordEncoder.encode(this.env.getProperty("config.security.oauth2.client.secret", CONFIG_SECURITY_OAUTH2_CLIENTE_SECRET)))
+				.scopes("read", "write").authorizedGrantTypes("password", "refresh_token")
+				.accessTokenValiditySeconds(3600).refreshTokenValiditySeconds(3600).and().withClient("androidapp")
+				.secret(passwordEncoder.encode(CONFIG_SECURITY_OAUTH2_CLIENTE_SECRET)).scopes("read", "write")
+				.authorizedGrantTypes("password", "refresh_token").accessTokenValiditySeconds(3600)
+				.refreshTokenValiditySeconds(3600);
 	}
-	//fin configuracion de clients
-    
-	
-	//inicio configuracion usuarios owners
+	// fin configuracion de clients
+
+	// inicio configuracion usuarios owners
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain(); 
-		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(this.infoAdicionalToken,accessTokenConverter()));
-		
-		endpoints.authenticationManager(this.authenticationManager)
-		.tokenStore(tokenStore())
-		.accessTokenConverter(accessTokenConverter())
-		.tokenEnhancer(tokenEnhancerChain);
+		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(this.infoAdicionalToken, accessTokenConverter()));
+
+		endpoints.authenticationManager(this.authenticationManager).tokenStore(tokenStore())
+				.accessTokenConverter(accessTokenConverter()).tokenEnhancer(tokenEnhancerChain);
 	}
-    
+
 	@Bean
-	public TokenStore tokenStore() {		
+	public TokenStore tokenStore() {
 		return new JwtTokenStore(accessTokenConverter());
 	}
 
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		jwtAccessTokenConverter.setSigningKey(Base64.getEncoder().encodeToString(this.env.getProperty("config.security.oauth2.jwt.key").getBytes()));
+		jwtAccessTokenConverter.setSigningKey(Base64.getEncoder().encodeToString(
+				this.env.getProperty("config.security.oauth2.jwt.key", CONFIG_SECURITY_OAUTH2_JWT_KEY).getBytes()));
 		return jwtAccessTokenConverter;
 	}
-	//fin configuracion usuarios owners
+	// fin configuracion usuarios owners
 
 }
