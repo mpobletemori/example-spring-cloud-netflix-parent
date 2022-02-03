@@ -1,1 +1,1 @@
-spring:  application:    name: servicio-zuul-server  cloud:    config:      uri: http://localhost:8888    eureka:  client:    service-url:      defaultZone: http://localhost:8761/eureka      management:  endpoints:    web:      exposure:        include: "*"
+spring:  application:    name: servicio-zuul-server  cloud:    config:      uri: http://config-server:8888    eureka:  client:    service-url:      defaultZone: http://eureka-server:8761/eureka      management:  endpoints:    web:      exposure:        include: "*"
