@@ -114,6 +114,7 @@ Puerto de rabbitmq 5672
 docker build -t <<nombre_imagen:version>> .
 docker build -t config-server:1.0.0 .
 docker build -t eureka-server:1.0.0 .
+docker build -t servicio-productos:1.0.0 .
 
 --Crear red en docker para prueba
 docker network create springcloud_red
@@ -123,9 +124,17 @@ docker run -p 8888:8888 --name config-server --network springcloud_red config-se
 docker run -p 8761:8761 --name eureka-server --network springcloud_red eureka-server:1.0.0
 docker run -d -p 3306:3306 --name mysql5_7_springcloud    --network springcloud_red -e MYSQL_DATABASE=db_springboot_cloud -e MYSQL_ROOT_PASSWORD=1234 mysql:5.7
 docker run -d -p 5432:5432 --name postgres9_5_springcloud --network springcloud_red -e POSTGRES_DB=db_springboot_cloud    -e POSTGRES_PASSWORD=1234   postgres:9.5-alpine
+--PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P
+docker run -P --name servicio-productos --network springcloud_red servicio-productos:1.0.0
 
 --Ver log en docker
 docker logs -f <<image_id>>
 docker logs -f <<container_name>>
 
-
+1.-config-server
+2.-eureka-server
+3.-servicio-usuarios
+4.-servicio-oauth2
+5.-servicio-productos
+6.-servicio-items
+7.-servicio-zuul-server
