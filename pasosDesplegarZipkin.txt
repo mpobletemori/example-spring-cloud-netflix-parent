@@ -113,53 +113,59 @@ Puerto de rabbitmq 5672
 docker network create springcloud_red
 
 --Crear contenedor docker apartir de imagen docker creado
+docker run -d -p 15672:15672 -p 5672:5672 --name rabbitmq_1 --network springcloud_red rabbitmq:3.8.27-management-alpine
 docker run -d -p 3306:3306 --name mysql5_7_springcloud    --network springcloud_red -e MYSQL_DATABASE=db_springboot_cloud -e MYSQL_ROOT_PASSWORD=1234 mysql:5.7
 docker run -d -p 5432:5432 --name postgres9_5_springcloud --network springcloud_red -e POSTGRES_DB=db_springboot_cloud    -e POSTGRES_PASSWORD=1234   postgres:9.5-alpine
 
+--zipkin server 
+cd {ruta_parent}\example-spring-cloud-netflix-parent\zipkin-server
+docker build -t zipkin-server:1.0.0 .
+docker run -d -p 9411:9411 --name zipkin-server        --network springcloud_red -e RABBIT_ADDRESSES=rabbitmq_1:5672 -e STORAGE_TYPE=mysql -e MYSQL_HOST=mysql5_7_springcloud -e MYSQL_TCP_PORT=3306 -e MYSQL_USER=zipkin -e MYSQL_PASS=zipkin -e MYSQL_MAX_CONNECTIONS=10 -e MYSQL_USE_SSL=false zipkin-server:1.0.0
+
 --Config-server
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\config-server
+cd {ruta_parent}\example-spring-cloud-netflix-parent\config-server
 .\mvnw clean package -DskipTests
 docker build -t config-server:1.0.0 .
-docker run -p 8888:8888 --name config-server        --network springcloud_red config-server:1.0.0
+docker run -d -p 8888:8888 --name config-server        --network springcloud_red config-server:1.0.0
 
 --eureka-server
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\eureka-server
+cd {ruta_parent}\example-spring-cloud-netflix-parent\eureka-server
 .\mvnw clean package -DskipTests
 docker build -t eureka-server:1.0.0 .
-docker run -p 8761:8761 --name eureka-server        --network springcloud_red eureka-server:1.0.0
+docker run -d -p 8761:8761 --name eureka-server        --network springcloud_red eureka-server:1.0.0
 
 --usuarios
 --PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\ms-oauth2-usuarios
+cd {ruta_parent}\example-spring-cloud-netflix-parent\ms-oauth2-usuarios
 .\mvnw clean package -DskipTests
 docker build -t servicio-usuarios:1.0.0 .
-docker run -P           --name servicio-usuarios    --network springcloud_red servicio-usuarios:1.0.0
+docker run -d -P           --name servicio-usuarios    --network springcloud_red servicio-usuarios:1.0.0
 
 --oauth2
 --PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\ms-oauth2-authserver
+cd {ruta_parent}\example-spring-cloud-netflix-parent\ms-oauth2-authserver
 .\mvnw clean package -DskipTests
 docker build -t servicio-oauth2:1.0.0 .
-docker run -P           --name servicio-oauth2      --network springcloud_red servicio-oauth2:1.0.0
+docker run -d -P           --name servicio-oauth2      --network springcloud_red servicio-oauth2:1.0.0
 
 --servicio-producto
 --PARA ESTE CASO A NO TENER IP FIJA SOLO SE USA -P Y --NAME ES OPCIONAL
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\ms-productos
+cd {ruta_parent}\example-spring-cloud-netflix-parent\ms-productos
 .\mvnw clean package -DskipTests
 docker build -t servicio-productos:1.0.0 .
-docker run -P           --name servicio-productos   --network springcloud_red servicio-productos:1.0.0
+docker run -d -P           --name servicio-productos   --network springcloud_red servicio-productos:1.0.0
 
 --servicio-items
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\ms-items
+cd {ruta_parent}\example-spring-cloud-netflix-parent\ms-items
 .\mvnw clean package -DskipTests
 docker build -t servicio-items:1.0.0 .
-docker run -p 9000:9000 --name servicio-items   --network springcloud_red servicio-items:1.0.0
+docker run -d -p 9000:9000 --name servicio-items   --network springcloud_red servicio-items:1.0.0
 
 --zuul
-cd D:\mpobletemori\sts_practica\wks1\springcloudEspaniol\example-spring-cloud-netflix-parent\zuul-server
+cd {ruta_parent}\example-spring-cloud-netflix-parent\zuul-server
 .\mvnw clean package -DskipTests
 docker build -t servicio-zuul-server:1.0.0 .
-docker run -p 8089:8089 --name servicio-zuul-server --network springcloud_red servicio-zuul-server:1.0.0
+docker run -d -p 8089:8089 --name servicio-zuul-server --network springcloud_red servicio-zuul-server:1.0.0
 
 --Ver log en docker
 docker logs -f <<image_id>>
