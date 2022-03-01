@@ -1,0 +1,20 @@
+version: '3.7'
+services:
+  #nombre de contenedor config-server
+  config-server:
+    image: config-server:1.0.0
+    ports:
+      - "8888:8888"
+    restart: always
+    networks:
+      - springcloud_red
+  #nombre de contenedor config-server
+  eureka-server:
+    image: eureka-server:1.0.0
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - springcloud_red
+networks:
+  springcloud_red:

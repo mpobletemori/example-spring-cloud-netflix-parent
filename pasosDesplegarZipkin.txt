@@ -173,14 +173,21 @@ docker logs -f <<container_name>>
 
 --Bajar contenedor
 docker stop <<container_id1>> <<container_id3>> <<container_id3>> 
+--Bajar todos los contenedores
+docker stop $(docker ps -q)
 --Levantar contenedor
 docker start <<container_id1>> <<container_id3>> <<container_id3>> 
 
 --borrar contenedor (previamente detener contenedor)
 docker rm <<container_id1>> <<container_id3>> <<container_id3>> 
+--borrar contenedores por id y todos
+docker stop $(docker ps -qa)
 
 --borrar imagen
 docker rmi <<image_id1>> <<image_id3>> <<image_id3>>
+
+--Levantar docker-compose
+docker-compose up
 
 1.-config-server
 2.-eureka-server
