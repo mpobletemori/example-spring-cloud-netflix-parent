@@ -28,6 +28,18 @@ services:
       MYSQL_ROOT_PASSWORD: 1234
     networks:
       - springcloud_red
+  #nombre de contenedor postgresql
+  postgres9_5_springcloud:
+    image: postgres:9.5-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    #equivalente a "-e POSTGRES_DB=db_springboot_cloud -e POSTGRES_PASSWORD=1234"
+    environment:
+      POSTGRES_DB: db_springboot_cloud
+      POSTGRES_PASSWORD: 1234
+    networks:
+      - springcloud_red
   #nombre de contenedor config-server
   servicio-productos:
     image: servicio-productos:1.0.0
@@ -38,6 +50,77 @@ services:
     depends_on:
       - config-server
       - eureka-server
+      - mysql5_7_springcloud
+    networks:
+      - springcloud_red
+  servicio-items:
+    image: servicio-items:1.0.0
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+      - "9002:9002"
+    restart: always
+    depends_on:
+      - config-server
+      - eureka-server
+      - servicio-productos
+    networks:
+      - springcloud_red
+  servicio-usuarios:
+    image: servicio-usuarios:1.0.0
+    restart: always
+    depends_on:
+      - config-server
+      - eureka-server
+      - postgres9_5_springcloud
+    networks:
+      - springcloud_red
+  servicio-oauth2:
+    image: servicio-oauth2:1.0.0
+    restart: always
+    depends_on:
+      - config-server
+      - eureka-server
+      - servicio-usuarios
+    networks:
+      - springcloud_red
+  servicio-zuul-server:
+    image: servicio-zuul-server:1.0.0
+    ports:
+      - "8089:8089"      
+    restart: always
+    depends_on:
+      - config-server
+      - eureka-server
+      - servicio-productos
+      - servicio-items
+    networks:
+      - springcloud_red
+  #nombre de contenedor rabbitmq
+  rabbitmq_1:
+    image: rabbitmq:3.8.27-management-alpine
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    restart: always
+    networks:
+      - springcloud_red
+  zipkin-server:
+    image: zipkin-server:1.0.0
+    ports:
+      - "9411:9411"
+    restart: always
+    #equivalente a "-e RABBIT_ADDRESSES=rabbitmq_1:5672 -e STORAGE_TYPE=mysql -e MYSQL_HOST=mysql5_7_springcloud -e MYSQL_TCP_PORT=3306 -e MYSQL_USER=zipkin -e MYSQL_PASS=zipkin -e MYSQL_MAX_CONNECTIONS=10 -e MYSQL_USE_SSL=false"
+    environment:
+      RABBIT_ADDRESSES: rabbitmq_1:5672 
+      STORAGE_TYPE: mysql 
+      MYSQL_HOST: mysql5_7_springcloud
+      MYSQL_TCP_PORT: 3306
+      MYSQL_USER: zipkin
+      MYSQL_PASS: zipkin
+      MYSQL_MAX_CONNECTIONS: 10
+    depends_on:
+      - rabbitmq_1
       - mysql5_7_springcloud
     networks:
       - springcloud_red
