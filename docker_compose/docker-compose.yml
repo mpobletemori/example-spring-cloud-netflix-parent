@@ -16,5 +16,30 @@ services:
     restart: always
     networks:
       - springcloud_red
+  #nombre de contenedor mysql
+  mysql5_7_springcloud:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    restart: always
+    #equivalente a "-e MYSQL_DATABASE=db_springboot_cloud -e MYSQL_ROOT_PASSWORD=1234"
+    environment:
+      MYSQL_DATABASE: db_springboot_cloud
+      MYSQL_ROOT_PASSWORD: 1234
+    networks:
+      - springcloud_red
+  #nombre de contenedor config-server
+  servicio-productos:
+    image: servicio-productos:1.0.0
+    #ports es dinamico por que estara comentado
+    #ports:
+    #  - "8761:8761"
+    restart: always
+    depends_on:
+      - config-server
+      - eureka-server
+      - mysql5_7_springcloud
+    networks:
+      - springcloud_red
 networks:
   springcloud_red:

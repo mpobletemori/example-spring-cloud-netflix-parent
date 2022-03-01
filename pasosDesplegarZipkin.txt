@@ -187,7 +187,15 @@ docker stop $(docker ps -qa)
 docker rmi <<image_id1>> <<image_id3>> <<image_id3>>
 
 --Levantar docker-compose
-docker-compose up
+docker-compose up -d
+--Levantar docker-compose por contenedor
+docker-compose up -d <<nombre_contenedor>>
+
+--Eliminar contenedores por docker-compose
+docker-compose down -v
+
+--Ver log de docker-compose
+docker-compose logs -f
 
 1.-config-server
 2.-eureka-server
